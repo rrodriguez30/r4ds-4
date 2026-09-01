@@ -1,0 +1,9 @@
+---
+title: "Crypto Markets"
+author: "GitHub Copilot"
+format: html
+---
+
+# Crypto Markets
+
+This page explores the world of crypto markets.
