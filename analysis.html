@@ -76,6 +76,114 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Schema
+date_raw: string
+coin_id: string
+price_usd: double
+market_cap_usd: double
+market_cap_str: string
+volume_usd: double</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 2
+   coin_id avg_market_cap
+   &lt;chr&gt;            &lt;dbl&gt;
+ 1 btc            1.88e12
+ 2 eth            3.47e11
+ 3 xrp            2.22e11
+ 4 usdt           1.71e11
+ 5 bnb            1.05e11
+ 6 usdc           6.60e10
+ 7 doge           2.72e10
+ 8 ada            2.12e10
+ 9 link           1.51e10
+10 cro            1.12e10
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_line()`: Each group consists of only one observation.
+ℹ Do you need to adjust the group aesthetic?</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_line()`: Each group consists of only one observation.
+ℹ Do you need to adjust the group aesthetic?</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "category_id" "description"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 9
+  coin_id coin_name    category_id    launch_date launch_date_parsed description
+  &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;       &lt;date&gt;             &lt;chr&gt;      
+1 btc     Bitcoin      bitcoin        January 3,… 2009-01-03         "Bitcoin i…
+2 ltc     Litecoin     bitcoin        October 7,… 2011-10-07         "Litecoin …
+3 bch     Bitcoin Cash bitcoin        August 1, … 2017-08-01         "Bitcoin C…
+4 eth     Ethereum     smart-contrac… 2015-07-30  2015-07-30         "Ethereum …
+5 bnb     BNB          smart-contrac… July 25, 2… 2017-07-25         "BNB start…
+# ℹ 3 more variables: category_name &lt;chr&gt;, era_introduced &lt;chr&gt;,
+#   category_description &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 1
+  `range(date)`
+  &lt;date&gt;       
+1 2018-01-01   
+2 2026-05-23   </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <section id="crypto-markets" class="level1">
 <h1>Crypto Markets</h1>
 <p>This page explores the world of crypto markets.</p>
