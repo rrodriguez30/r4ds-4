@@ -2,7 +2,182 @@
 title: "Crypto Markets"
 author: "GitHub Copilot"
 format: html
+execute:
+  echo: false
 ---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+```
+
+```{r}
+open_dataset("data/daily_prices.parquet") |> schema()
+```
+
+```{r}
+open_dataset("data/daily_prices.parquet") |>
+  filter(date_raw >= "2025-01-01") |>
+  group_by(coin_id) |>
+  summarise(avg_market_cap = mean(market_cap_usd, na.rm = TRUE)) |>
+  arrange(desc(avg_market_cap)) |>
+  collect()
+```
+
+```{r}
+open_dataset("data/daily_prices.parquet") |>
+  write_dataset(
+    path = "data/prices_by_coin",
+    format = "parquet",
+    partitioning = "coin_id"
+  )
+```
+
+```{r}
+#| cache: true
+prices <- read_parquet("data/daily_prices.parquet")
+metadata <- read_parquet("data/coin_metadata.parquet")
+categories <- read_parquet("data/categories.parquet")
+```
+
+```{r}
+prices |>
+  filter(coin_id == "btc") |>
+  ggplot(aes(x = date_raw, y = price_usd)) +
+  geom_line()
+```
+
+```{r}
+prices |>
+  filter(coin_id == "btc") |>
+  mutate(market_cap_trillions = market_cap_usd / 1e12) |>
+  ggplot(aes(x = date_raw, y = market_cap_trillions)) +
+  geom_line()
+```
+
+```{r}
+prices |>
+  mutate(
+    market_cap_billions = market_cap_usd / 1e9,
+    coin_id = fct_reorder(
+      coin_id,
+      market_cap_billions,
+      .fun = median,
+      .desc = TRUE
+    )
+  ) |>
+  ggplot(aes(x = coin_id, y = market_cap_billions)) +
+  geom_boxplot() +
+  scale_y_log10()
+```
+
+```{r}
+intersect(names(metadata), names(categories))
+
+metadata |>
+  mutate(
+    launch_date_parsed = as.Date(
+      parse_date_time(launch_date, orders = c("B d, Y", "Y-m-d"))
+    )
+  ) |>
+  select(
+    coin_id,
+    coin_name,
+    category_id,
+    launch_date,
+    launch_date_parsed,
+    description
+  ) |>
+  left_join(
+    categories |>
+      rename(category_description = description),
+    by = "category_id"
+  ) |>
+  slice_head(n = 5)
+```
+
+```{r}
+prices |>
+  mutate(date = as.Date(date_raw)) |>
+  reframe(range(date))
+```
+
+```{r}
+crypto <- prices |>
+  mutate(date = as.Date(date_raw))
+
+crypto |>
+  group_by(date) |>
+  summarise(total_market_cap_trillions = sum(market_cap_usd, na.rm = TRUE) / 1e12) |>
+  ggplot(aes(x = date, y = total_market_cap_trillions)) +
+  geom_line()
+```
+
+```{r}
+crypto |>
+  left_join(metadata |> select(coin_id, category_id), by = "coin_id") |>
+  left_join(categories |> select(category_id, category_name), by = "category_id") |>
+  group_by(date, category_name) |>
+  summarise(
+    market_cap_trillions = sum(market_cap_usd, na.rm = TRUE) / 1e12,
+    .groups = "drop"
+  ) |>
+  mutate(
+    category_name = fct_reorder(
+      category_name,
+      market_cap_trillions,
+      .fun = median,
+      .desc = TRUE
+    )
+  ) |>
+  ggplot(aes(x = date, y = market_cap_trillions, color = category_name)) +
+  geom_rect(
+    xmin = as.Date("2022-05-07"),
+    xmax = as.Date("2022-05-12"),
+    ymin = -Inf,
+    ymax = Inf,
+    inherit.aes = FALSE,
+    fill = "grey40",
+    alpha = 0.15
+  ) +
+  geom_rect(
+    xmin = as.Date("2022-11-08"),
+    xmax = as.Date("2022-11-11"),
+    ymin = -Inf,
+    ymax = Inf,
+    inherit.aes = FALSE,
+    fill = "grey40",
+    alpha = 0.15
+  ) +
+  geom_line() +
+  annotate(
+    "text",
+    x = as.Date("2022-05-09"),
+    y = Inf,
+    label = "Luna/UST crash",
+    vjust = 1.5,
+    size = 3
+  ) +
+  annotate(
+    "text",
+    x = as.Date("2022-11-09"),
+    y = Inf,
+    label = "FTX collapse",
+    vjust = 1.5,
+    size = 3
+  ) +
+  scale_color_viridis_d(option = "D") +
+  labs(
+    title = "Crypto Market Cap by Category",
+    subtitle = "Daily market-cap totals for coins in each category, shown in trillions of U.S. dollars",
+    x = "Date",
+    y = "Market cap (trillions of U.S. dollars)",
+    color = "Category",
+    caption = "Source: daily_prices.parquet, coin_metadata.parquet, and categories.parquet"
+  ) +
+  theme_minimal()
+```
 
 # Crypto Markets
 
